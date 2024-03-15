@@ -16,9 +16,9 @@ export default function Navbar(props) {
                 alignItems="center"
                 spacing={2}
             >
-                <Button href="/" variant='text'>Home</Button>
-                <Button href="/db" variant='text'>Database</Button>
-                <Button href="/calc" variant='text'>Calculator</Button>
+                <Button href="./" variant='text'>Home</Button>
+                <Button href="#/db" variant='text'>Database</Button>
+                <Button href="#/calc" variant='text'>Calculator</Button>
                 
             </Stack>
             </Box>

@@ -83,27 +83,28 @@ export default function Calculator() {
   );
   const Insurance = createState(defaultValues.Insurance);
   const Units = createState(defaultValues.Units);
+  const TotalRent = createState(defaultValues.Rent * defaultValues.Units);
   const Beds = createState(defaultValues.Beds);
   const Baths = createState(defaultValues.Baths);
   const Rent = createState(defaultValues.Rent);
   const CapEx = createPercentState(
-    Rent,
-    (defaultValues.Rent / 100) * defaultValues.CapEx,
+    TotalRent,
+    (defaultValues.Rent * defaultValues.Units / 100) * defaultValues.CapEx,
     defaultValues.CapEx
   );
   const Vacancy = createPercentState(
-    Rent,
-    (defaultValues.Rent / 100) * defaultValues.Vacancy,
+    TotalRent,
+    (defaultValues.Rent * defaultValues.Units / 100) * defaultValues.Vacancy,
     defaultValues.Vacancy
   );
   const Maintenance = createPercentState(
-    Rent,
-    (defaultValues.Rent / 100) * defaultValues.Maintenance,
+    TotalRent,
+    (defaultValues.Rent * defaultValues.Units / 100) * defaultValues.Maintenance,
     defaultValues.Maintenance
   );
   const Management = createPercentState(
-    Rent,
-    (defaultValues.Rent / 100) * defaultValues.Management,
+    TotalRent,
+    (defaultValues.Rent * defaultValues.Units / 100) * defaultValues.Management,
     defaultValues.Management
   );
 
@@ -112,12 +113,22 @@ export default function Calculator() {
     DownPayment.set((e.target.value * DownPayment.valPercent) / 100);
     pTaxes.set((e.target.value * pTaxes.valPercent) / 100);
   };
+  TotalRent.Changed = (e) => {
+    TotalRent.set(e.target.value);
+    CapEx.set((e.target.value * CapEx.valPercent) / 100);
+    Vacancy.set((e.target.value * Vacancy.valPercent) / 100);
+    Maintenance.set((e.target.value * Maintenance.valPercent) / 100);
+    Management.set((e.target.value * Maintenance.valPercent) / 100);
+    Rent.set(e.target.value / Units.val);
+  };
   Rent.Changed = (e) => {
+    TotalRent.set(e.target.value * Units.val);
+    CapEx.set((e.target.value * Units.val * CapEx.valPercent) / 100);
+    Vacancy.set((e.target.value * Units.val * Vacancy.valPercent) / 100);
+    Maintenance.set((e.target.value * Units.val * Maintenance.valPercent) / 100);
+    Management.set((e.target.value * Units.val * Maintenance.valPercent) / 100);
     Rent.set(e.target.value);
-    CapEx.set(e.target.value * CapEx.valPercent/100);
-    Vacancy.set(e.target.value * Vacancy.valPercent/100);
-    Maintenance.set(e.target.value * Maintenance.valPercent/100);
-  }
+  };
 
   function calcLoanPayment(P, r, n) {
     const R = Math.pow(1 + r / 1200, 12 * n);
@@ -129,9 +140,13 @@ export default function Calculator() {
     mRate.val,
     Term.val
   );
-  var NOI =
-    Rent.val * Units.val * 12 -
-    (Number(pTaxes.val) + Number(Insurance.val) + Number(CapEx.val) + Number(Vacancy.val) + Number(Maintenance.val));
+  var Reserves = 
+  Number(CapEx.val) +
+  Number(Vacancy.val) +
+  Number(Maintenance.val) +
+  Number(Management.val);
+
+  var NOI = (TotalRent.val -  Number(Reserves)) * 12 - (Number(pTaxes.val) + Number(Insurance.val));
 
   const FC_sx = {
     display: "flex",
@@ -171,7 +186,10 @@ export default function Calculator() {
           <NumberRow label="Insurance" obj={Insurance} adorn="$" />
           <DisplayRow
             label="Mortgage Pymt"
-            value={Number(LoanPmt) + (Number(pTaxes.val) + Number(Insurance.val)) / 12}
+            value={
+              Number(LoanPmt) +
+              (Number(pTaxes.val) + Number(Insurance.val)) / 12
+            }
             adorn="$"
           />
         </FormBoxContainer>
@@ -179,7 +197,8 @@ export default function Calculator() {
       <Stack>
         <FormBoxContainer className="Inc" Title="Income" sx={FC_sx}>
           <NumberRow label="Units" obj={Units} />
-          <DoubleRow label="Rent" obj={Rent} />
+          <DoubleRowRent label1="Total Rent" label2="Rent/Unit" rent={Rent} units={Units} totalrent={TotalRent}/>
+          <DoubleRowNoPercent label="Beds/Baths" obj1={Beds} obj2={Baths} />
         </FormBoxContainer>
         <FormBoxContainer className="Reserves" Title="Reserves" sx={FC_sx}>
           <DoubleRow label="CapEx" obj={CapEx} />
@@ -188,8 +207,7 @@ export default function Calculator() {
           <DoubleRow label="Management" obj={Management} />
           <DisplayRow
             label="Reserves"
-            value={Number(CapEx.val) + Number(Vacancy.val)
-                 + Number(Maintenance.val) + Number(Management.val)}
+            value={Reserves}
             adorn="$"
           />
         </FormBoxContainer>
@@ -201,7 +219,8 @@ export default function Calculator() {
             value={(NOI / pPrice.val) * 100}
             adorn="%"
           />
-          <DisplayRow label="Cash Flow" value={NOI/12 - Number(LoanPmt)}/>
+          <DisplayRow label="Cash Flow" value={NOI / 12 - Number(LoanPmt)} adorn='$'/>
+          <DisplayRow label="Cash Flow / Yr" value={Number(NOI) - 12*Number(LoanPmt)} adorn='$'/>
         </FormBoxContainer>
       </Stack>
     </Box>
@@ -282,6 +301,103 @@ function NumberRow(props) {
       </Stack>
     </>
   );
+}
+
+function DoubleRowRent(props) {
+    var label1, label2, Rent, Units, TotalRent;
+    label1 = props.label1;
+    label2 = props.label2;
+    Rent = props.rent;
+    Units = props.units;
+    TotalRent = props.totalrent;
+
+    return (
+      <>
+        <Stack direction={"row"} spacing={2} useFlexGap alignItems={"center"}>
+          <Typography minWidth={120}>Rent</Typography>
+          <Box width={"100%"} display={"flex"}>
+            <Box width={"50%"}>
+              <TextField
+                fullWidth
+                label={label1}
+                color="primary"
+                variant="outlined"
+                type="number"
+                placeholder={"100000"}
+                value={TotalRent.val}
+                onChange={TotalRent.Changed}
+                InputProps={ad("$")}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+              />
+            </Box>
+            <Box width={"50%"}>
+              <TextField
+                fullWidth
+                label={label2}
+                color="primary"
+                variant="outlined"
+                type="number"
+                placeholder={"20"}
+                value={Rent.val}
+                onChange={Rent.Changed}
+                InputProps={ad("$")}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+              />
+            </Box>
+          </Box>
+        </Stack>
+      </>
+    );
+  }
+
+function DoubleRowNoPercent(props) {
+    var label, label1, label2, obj1, obj2;
+    label = props.label;
+    [label1, label2] = props.label.split('/');
+    obj1 = props.obj1;
+    obj2 = props.obj2;
+
+    return (
+      <>
+        <Stack direction={"row"} spacing={2} useFlexGap alignItems={"center"}>
+          <Typography minWidth={120}>{label}</Typography>
+          <Box width={"100%"} display={"flex"}>
+            <Box width={"50%"}>
+              <TextField
+                fullWidth
+                label={label1}
+                color="primary"
+                variant="outlined"
+                type="number"
+                placeholder={"100000"}
+                value={obj1.val}
+                onChange={obj1.Changed}
+                InputProps={ad("$")}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+              />
+            </Box>
+            <Box width={"50%"}>
+              <TextField
+                fullWidth
+                label={label2}
+                color="primary"
+                variant="outlined"
+                type="number"
+                placeholder={"20"}
+                value={obj2.val}
+                onChange={obj2.Changed}
+                InputProps={ad("$")}
+                InputLabelProps={{ shrink: true }}
+                size="small"
+              />
+            </Box>
+          </Box>
+        </Stack>
+      </>
+    );
 }
 
 function DoubleRow(props) {
@@ -388,11 +504,21 @@ function DisplayRow(props) {
     value = "";
   }
 
+  const fmt = () => {
+    if (adorn==='$') {
+        return(<>{USD.format(value)}</>);
+    } else if (adorn==='%') {
+        return(<>{value.toLocaleString("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}) + "%"}</>);
+    } else {
+        return(<>{value.toLocaleString("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2})}</>);
+    }
+    };
+
   return (
     <Stack direction={"row"} spacing={2} border={1}>
       <Typography minWidth={120}>{label}</Typography>
       <Box width={"100%"}>
-        <Typography align="center">{USD.format(value)}</Typography>
+        <Typography align="center">{fmt(value)}</Typography>
       </Box>
     </Stack>
   );
