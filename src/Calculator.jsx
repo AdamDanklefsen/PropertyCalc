@@ -61,7 +61,7 @@ export default function Calculator() {
     Units: 2,
     Beds: 4,
     Baths: 2,
-    Rent: 1000,
+    Rent: 700,
     CapEx: 10,
     Vacancy: 5,
     Maintenance: 5,
