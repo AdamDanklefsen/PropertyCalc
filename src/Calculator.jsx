@@ -374,7 +374,7 @@ function DoubleRowNoPercent(props) {
                 placeholder={"100000"}
                 value={obj1.val}
                 onChange={obj1.Changed}
-                InputProps={ad("$")}
+                //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
                 size="small"
               />
@@ -389,7 +389,7 @@ function DoubleRowNoPercent(props) {
                 placeholder={"20"}
                 value={obj2.val}
                 onChange={obj2.Changed}
-                InputProps={ad("$")}
+                //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
                 size="small"
               />
