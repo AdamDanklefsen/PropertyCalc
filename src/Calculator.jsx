@@ -1,5 +1,5 @@
 import FormControl from "@mui/material/FormControl";
-import { FormHelperText, Input, InputLabel, TextField } from "@mui/material";
+import { Button, FormHelperText, Input, InputLabel, TextField } from "@mui/material";
 import { createTheme } from "@mui/material";
 import { Box } from "@mui/material";
 import { Stack, Typography } from "@mui/material";
@@ -57,6 +57,7 @@ export default function Calculator() {
     mRate: 7,
     Term: 30,
     pTaxes: 2.17,
+    MortgageInsurance: 1,
     Insurance: 1200,
     Units: 2,
     Beds: 4,
@@ -80,6 +81,11 @@ export default function Calculator() {
     pPrice,
     (defaultValues.pPrice / 100) * defaultValues.pTaxes,
     defaultValues.pTaxes
+  );
+  const MortgageInsurance = createPercentState(
+    pPrice,
+    (defaultValues.pPrice / 100) * defaultValues.MortgageInsurance,
+    defaultValues.MortgageInsurance
   );
   const Insurance = createState(defaultValues.Insurance);
   const Units = createState(defaultValues.Units);
@@ -112,6 +118,7 @@ export default function Calculator() {
     pPrice.set(e.target.value);
     DownPayment.set((e.target.value * DownPayment.valPercent) / 100);
     pTaxes.set((e.target.value * pTaxes.valPercent) / 100);
+    MortgageInsurance.set((e.target.value * MortgageInsurance.valPercent) / 100);
   };
   TotalRent.Changed = (e) => {
     TotalRent.set(e.target.value);
@@ -146,7 +153,8 @@ export default function Calculator() {
   Number(Maintenance.val) +
   Number(Management.val);
 
-  var NOI = (TotalRent.val -  Number(Reserves)) * 12 - (Number(pTaxes.val) + Number(Insurance.val));
+  var NOI = (TotalRent.val -  Number(Reserves)) * 12 
+  - (Number(pTaxes.val) + Number(Insurance.val) + Number(MortgageInsurance.val));
 
   const FC_sx = {
     display: "flex",
@@ -170,7 +178,7 @@ export default function Calculator() {
     >
       <Stack>
         <FormBoxContainer className="Addr" sx={FC_sx} Title="Address">
-          <NumberRow label="Address" />
+          <NumberRow label="Address" textType='text' defVal='Enter Address'/>
         </FormBoxContainer>
 
         <FormBoxContainer className="Fin" Title="Financing" sx={FC_sx}>
@@ -183,12 +191,13 @@ export default function Calculator() {
         <FormBoxContainer className="Expen" Title="Expenses" sx={FC_sx}>
           <DisplayRow label="Loan Payment" value={LoanPmt} adorn="$" />
           <DoubleRow label="Property Taxes" obj={pTaxes} />
+          <DoubleRow label="Mortgage Insurance" obj={MortgageInsurance} />
           <NumberRow label="Insurance" obj={Insurance} adorn="$" />
           <DisplayRow
             label="Mortgage Pymt"
             value={
               Number(LoanPmt) +
-              (Number(pTaxes.val) + Number(Insurance.val)) / 12
+              (Number(pTaxes.val) + Number(Insurance.val) + Number(MortgageInsurance.val)) / 12
             }
             adorn="$"
           />
@@ -222,7 +231,15 @@ export default function Calculator() {
           <DisplayRow label="Cash Flow" value={NOI / 12 - Number(LoanPmt)} adorn='$'/>
           <DisplayRow label="Cash Flow / Yr" value={Number(NOI) - 12*Number(LoanPmt)} adorn='$'/>
         </FormBoxContainer>
-      </Stack>
+
+        <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <Button variant="contained"
+          sx={{margin: 1, width:"50%"}}>
+          Save Entry
+        </Button>
+
+        </Box>
+        </Stack>
     </Box>
   );
 }
@@ -251,7 +268,7 @@ function ad(adorn) {
 }
 
 function NumberRow(props) {
-  var label, value, onChange, adorn, defVal;
+  var label, value, onChange, adorn, defVal, TextType;
   if ("label" in props) {
     label = props.label;
   } else {
@@ -278,6 +295,11 @@ function NumberRow(props) {
   } else {
     defVal = toString(0);
   }
+  if ("textType" in props) {
+    TextType = toString(props.textType);
+  } else {
+    TextType = 'number'
+  }
 
   return (
     <>
@@ -289,9 +311,9 @@ function NumberRow(props) {
             label={label}
             color="primary"
             variant="outlined"
-            type="number"
+            type={TextType}
             placeholder={defVal}
-            value={value}
+            value={TextType === 'number' ? Math.round((value)*100)/100 : value}
             onChange={onChange}
             InputProps={ad(adorn)}
             InputLabelProps={{ shrink: true }}
@@ -372,7 +394,7 @@ function DoubleRowNoPercent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"100000"}
-                value={obj1.val}
+                value={Math.round((obj1.val)*100)/100}
                 onChange={obj1.Changed}
                 //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -387,7 +409,7 @@ function DoubleRowNoPercent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"20"}
-                value={obj2.val}
+                value={Math.round((obj2.val)*100)/100}
                 onChange={obj2.Changed}
                 //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -453,7 +475,7 @@ function DoubleRow(props) {
               variant="outlined"
               type="number"
               placeholder={"100000"}
-              value={value}
+              value={Math.round((value)*100)/100}
               onChange={onChange}
               InputProps={ad("$")}
               InputLabelProps={{ shrink: true }}

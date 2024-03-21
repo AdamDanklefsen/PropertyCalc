@@ -22,7 +22,6 @@ import './TableView.css'
 
 export default function TableView(props) {
     const data = props["data"]["Elements"];
-    console.log(Object.keys(data[0]))
     return (
         <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
@@ -44,7 +43,7 @@ export default function TableView(props) {
 }
 
 function Row(props) {
-    console.log(props);
+    //console.log(props);
     const { row } = props;
     const [open, setOpen] = React.useState(false);
 
@@ -61,17 +60,20 @@ function Row(props) {
             </IconButton>
             </TableCell>
             <TableCell component="th" scope="row">
-                {row.number + " " + row.street + " " + row.suf}
+                {row.hasOwnProperty('address') ?
+                row.address :
+                row.number + " " + row.street + " " + row.suf
+            }
             </TableCell>
             <TableCell align="right">
-                {row.ListingPrice.toLocaleString("en-US", {style:"currency", currency:"USD"})}
+                {row.ListPrice.toLocaleString("en-US", {style:"currency", currency:"USD"})}
             </TableCell>
         </TableRow>
         <TableRow>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
                 <Box sx={{ margin: 1 }}>
-                Cashflow: {row.CashFlow.toLocaleString("en-US", {style:"currency", currency:"USD"})}
+                Cashflow: {row.cashflow.toLocaleString("en-US", {style:"currency", currency:"USD"})}
                 </Box>
             </Collapse>
             </TableCell>
@@ -79,17 +81,3 @@ function Row(props) {
         </React.Fragment>
     );
 }
-
-  /*
-  export default function TableView(props) {
-    console.log(props["data"])
-    const data = props["data"]["Elements"]
-
-
-    return (
-        <div className='tableview'>
-            
-        </div>
-    );
-}
-*/

@@ -1,40 +1,47 @@
 import TableView from "./TableView";
+import Axios from "axios";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export default function WelcomePage() {
-    const JsonData = { 
-        "Elements": [
-            {
-                "id": 0,
-                "number": 123,
-                "street": "Cherry",
-                "suf": "st",
-                "ListingPrice": 100000,
-                "CashFlow": 100
-            },
-            {
-                "id": 1,
-                "number": 100,
-                "street": "Michigan",
-                "suf": "av",
-                "ListingPrice": 1000000,
-                "CashFlow": 1000
-            },
-            {
-                "id": 2,
-                "number": 69,
-                "street": "Miranda",
-                "suf": "dr",
-                "ListingPrice": 150000,
-                "CashFlow": 500
-            }
-        ]   
-    };
+  const JsonData = {
+    Elements: [
+      {
+        address: "123 Cherry st",
+        ListPrice: 100000,
+        cashflow: 100,
+      }
+    ],
+  };
 
-    return (
-        <div>
-            <h1>This is the DatabaseView Page</h1>
-            <TableView data={JsonData}></TableView>
-        </div>
-        
-    );
+  const [catFact, setCatFact] = useState(JsonData);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/api/")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to authenticate");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Handle successful authentication
+        const d = {
+            Elements: data
+        }
+        setCatFact(d);
+      })
+      .catch((error) => {
+        // Handle authentication error
+        console.error("Authentication error:", error);
+      });
+  }, []);
+
+  return (
+    <div>
+      <h1>This is the DatabaseView Page</h1>
+      <TableView data={catFact}></TableView>
+      <p></p>
+    </div>
+  );
 }
