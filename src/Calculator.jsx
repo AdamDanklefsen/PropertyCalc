@@ -5,6 +5,10 @@ import { Box } from "@mui/material";
 import { Stack, Typography } from "@mui/material";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useTheme } from "@mui/material";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import IconButton from '@mui/material/IconButton';
+import * as React from 'react';
 
 import "./Calculator.css";
 import { useState } from "react";
@@ -52,8 +56,10 @@ export default function Calculator() {
 
   // Pull From Server
   const defaultValues = {
+    Address: "123 Main st",
     pPrice: 100000,
     DownPayment: 20,
+    ClosingCosts: 3,
     mRate: 7,
     Term: 30,
     pTaxes: 2.17,
@@ -69,11 +75,17 @@ export default function Calculator() {
     Management: 10,
   };
 
+  var Address = createState(defaultValues.Address);
   var pPrice = createState(defaultValues.pPrice);
   const DownPayment = createPercentState(
     pPrice,
     (defaultValues.pPrice / 100) * defaultValues.DownPayment,
     defaultValues.DownPayment
+  );
+  const ClosingCosts = createPercentState(
+    pPrice,
+    (defaultValues.pPrice / 100) * defaultValues.ClosingCosts,
+    defaultValues.ClosingCosts
   );
   const mRate = createState(defaultValues.mRate);
   const Term = createState(defaultValues.Term);
@@ -90,6 +102,7 @@ export default function Calculator() {
   const Insurance = createState(defaultValues.Insurance);
   const Units = createState(defaultValues.Units);
   const TotalRent = createState(defaultValues.Rent * defaultValues.Units);
+  const RentArray = createState(Array(8).fill(defaultValues.Rent));
   const Beds = createState(defaultValues.Beds);
   const Baths = createState(defaultValues.Baths);
   const Rent = createState(defaultValues.Rent);
@@ -136,6 +149,17 @@ export default function Calculator() {
     Management.set((e.target.value * Units.val * Maintenance.valPercent) / 100);
     Rent.set(e.target.value);
   };
+  RentArray.Changed = (e, i) => {
+    let tmp = [...RentArray.val];
+    tmp[i] = Number(e.target.value);
+    RentArray.set(tmp)
+    var tot = 0;
+    for (let i=0; i<Units.val; i++){
+      tot = tot + tmp[i];
+    }
+    TotalRent.set(tot);
+    Rent.set(tot / Units.val)
+  }
 
   function calcLoanPayment(P, r, n) {
     const R = Math.pow(1 + r / 1200, 12 * n);
@@ -155,6 +179,10 @@ export default function Calculator() {
 
   var NOI = (TotalRent.val -  Number(Reserves)) * 12 
   - (Number(pTaxes.val) + Number(Insurance.val) + Number(MortgageInsurance.val));
+
+  var cashToClose = DownPayment.val + ClosingCosts.val;
+
+  const [open, setOpen] = React.useState(false);
 
   const FC_sx = {
     display: "flex",
@@ -178,14 +206,16 @@ export default function Calculator() {
     >
       <Stack>
         <FormBoxContainer className="Addr" sx={FC_sx} Title="Address">
-          <NumberRow label="Address" textType='text' defVal='Enter Address'/>
+          <NumberRow label="Address" obj={Address} textType='text' defVal='Enter Address'/>
         </FormBoxContainer>
 
         <FormBoxContainer className="Fin" Title="Financing" sx={FC_sx}>
           <NumberRow label="Purchase Price" obj={pPrice} adorn="$" />
           <DoubleRow label="Down Payment" obj={DownPayment} />
+          <DoubleRow label="Closing Costs" obj={ClosingCosts}/>
           <NumberRow label="Rate" obj={mRate} adorn="%" />
           <NumberRow label="Term" obj={Term} adorn="Years" />
+          <DisplayRow label="Cash To Close" value={cashToClose} adorn="$"/>
         </FormBoxContainer>
 
         <FormBoxContainer className="Expen" Title="Expenses" sx={FC_sx}>
@@ -206,8 +236,30 @@ export default function Calculator() {
       <Stack>
         <FormBoxContainer className="Inc" Title="Income" sx={FC_sx}>
           <NumberRow label="Units" obj={Units} />
-          <DoubleRowRent label1="Total Rent" label2="Rent/Unit" rent={Rent} units={Units} totalrent={TotalRent}/>
-          <DoubleRowNoPercent label="Beds/Baths" obj1={Beds} obj2={Baths} />
+          <Stack direction='row' display="flex" justifyItems={"right"}>
+            <Stack justifyContent={'center'}>
+            <Typography align="left" >Detail</Typography>
+            </Stack>
+            
+            <IconButton
+                aria-label="expand row"
+                size="small"
+                margin={0}
+                padding={0}
+                onClick={() => setOpen(!open)}
+            >
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton> 
+          
+          </Stack>
+          {open
+          ? UnitView(Units, RentArray, TotalRent)
+          : <>
+              <DoubleRowRent label1="Total Rent" label2="Rent/Unit" rent={Rent} units={Units} totalrent={TotalRent}/>
+              <DoubleRowNoPercent label="Beds/Baths" obj1={Beds} obj2={Baths} />
+            </>
+          }
+          
         </FormBoxContainer>
         <FormBoxContainer className="Reserves" Title="Reserves" sx={FC_sx}>
           <DoubleRow label="CapEx" obj={CapEx} />
@@ -234,14 +286,110 @@ export default function Calculator() {
 
         <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
         <Button variant="contained"
-          sx={{margin: 1, width:"50%"}}>
+          sx={{margin: 1, width:"50%"}}
+          onClick={ (e) => testPush(e, Address, pPrice, DownPayment, mRate,
+                                    Term, LoanPmt, pTaxes, MortgageInsurance, Insurance,
+                                    Units, Beds, Baths, TotalRent,
+                                    CapEx, Vacancy, Maintenance, Management, NOI)}>
           Save Entry
         </Button>
 
         </Box>
         </Stack>
+        <ul>
+          <h4>Tickets</h4>
+          <li>Databse View Details</li>
+          <li>Import from Database to Calculator</li>
+          <li>Rent Detail Breakdown</li>
+          <li>Loan Options : Standard, Exact Payment</li>
+          <li>Custom Increments</li>
+          <li>What if Machine</li>
+          <li>Save Button feedback</li>
+          <li>Database Hosting</li>
+          <li></li>
+          <li></li>
+        </ul>
     </Box>
   );
+}
+
+function UnitView(Units, RentArray, TotalRent) {
+  const data = [];
+  var label = "";
+  for (let i=0; i<Units.val; i++){
+    label = "Unit "+(Number(i)+1);
+    data.push(<Stack key={i} direction={"row"} spacing={2} useFlexGap alignItems={"Center"}>
+                <Typography minWidth={120}>{label}</Typography>
+                <Box width={"100%"}>
+                  <TextField
+                    fullWidth
+                    label={label}
+                    color="primary"
+                    variant="outlined"
+                    type="Number"
+                    placeholder={"0"}
+                    value={(Math.round((RentArray.val[i])*100)/100).toString()}
+                    onChange={(e) => RentArray.Changed(e, i)}
+                    InputProps={ad('$')}
+                    InputLabelProps={{ shrink: true }}
+                    size="small"
+                  />
+                </Box>
+              </Stack>)
+  }
+  
+  data.push(<NumberRow key={"Total"} label="Total Rent" obj={TotalRent}/>)
+  return(data);
+}
+
+function testPush(event, Address, pPrice, DownPayment, mRate,
+    Term, LoanPmt, pTaxes, MortgageInsurance, Insurance,
+    Units, Beds, Baths, TotalRent,
+    CapEx, Vacancy, Maintenance, Management,
+    NOI) {
+     fetch('http://127.0.0.1:8000/api/api/',{
+       headers: {
+           'Accept': 'application/json',
+           'Content-Type': 'application/json'
+       },
+       method: 'POST',
+       body: JSON.stringify({
+           address: Address.val,
+           ListPrice : pPrice.val,
+           LoanDetails : {
+             DownPayment: DownPayment.val,
+             mRate: mRate.val,
+             Term: Term.val,
+             LoanPmt: LoanPmt,
+           },
+           MortgageDetails: {
+             pTaxes: pTaxes.val,
+             MortgageInsurance: MortgageInsurance.val,
+             Insurance: Insurance.val,
+             MortgagePmt: Number(LoanPmt) +
+             (Number(pTaxes.val) + Number(Insurance.val) + Number(MortgageInsurance.val)) / 12
+           },
+           PropertyDetails: {
+             Units: Units.val,
+             Beds: Beds.val,
+             Baths: Baths.val,
+             TotalRent: TotalRent.val
+           },
+           ReservesDetails: {
+             CapEx: CapEx.val,
+             Vacancy: Vacancy.val,
+             Maintenance: Maintenance.val,
+             Management: Management.val,
+             Reserves: Number(CapEx.val) + Number(Vacancy.val)
+             + Number(Maintenance.val) + Number(Management.val)
+           },
+           CashFlowDetails: {
+             NOI: NOI,
+             CapRate: (NOI / pPrice.val),
+             CashFlow: NOI / 12 - Number(LoanPmt)
+           },
+       })
+  })
 }
 
 function FormBoxContainer(props = { Title, sx }) {
@@ -313,7 +461,7 @@ function NumberRow(props) {
             variant="outlined"
             type={TextType}
             placeholder={defVal}
-            value={TextType === 'number' ? Math.round((value)*100)/100 : value}
+            value={TextType === 'number' ? (Math.round((value)*100)/100).toString() : value.toString()}
             onChange={onChange}
             InputProps={ad(adorn)}
             InputLabelProps={{ shrink: true }}
@@ -346,7 +494,7 @@ function DoubleRowRent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"100000"}
-                value={TotalRent.val}
+                value={TotalRent.val.toString()}
                 onChange={TotalRent.Changed}
                 InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -361,7 +509,7 @@ function DoubleRowRent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"20"}
-                value={Rent.val}
+                value={Rent.val.toString()}
                 onChange={Rent.Changed}
                 InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -394,7 +542,7 @@ function DoubleRowNoPercent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"100000"}
-                value={Math.round((obj1.val)*100)/100}
+                value={(Math.round((obj1.val)*100)/100).toString()}
                 onChange={obj1.Changed}
                 //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -409,7 +557,7 @@ function DoubleRowNoPercent(props) {
                 variant="outlined"
                 type="number"
                 placeholder={"20"}
-                value={Math.round((obj2.val)*100)/100}
+                value={(Math.round((obj2.val)*100)/100).toString()}
                 onChange={obj2.Changed}
                 //InputProps={ad("$")}
                 InputLabelProps={{ shrink: true }}
@@ -475,7 +623,7 @@ function DoubleRow(props) {
               variant="outlined"
               type="number"
               placeholder={"100000"}
-              value={Math.round((value)*100)/100}
+              value={(Math.round((value)*100)/100).toString()}
               onChange={onChange}
               InputProps={ad("$")}
               InputLabelProps={{ shrink: true }}
@@ -490,7 +638,7 @@ function DoubleRow(props) {
               variant="outlined"
               type="number"
               placeholder={"20"}
-              value={pctValue}
+              value={pctValue.toString()}
               onChange={pctChange}
               InputProps={ad("%")}
               InputLabelProps={{ shrink: true }}

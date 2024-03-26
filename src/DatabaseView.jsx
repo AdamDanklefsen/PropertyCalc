@@ -41,7 +41,23 @@ export default function WelcomePage() {
     <div>
       <h1>This is the DatabaseView Page</h1>
       <TableView data={catFact}></TableView>
-      <p></p>
+      <input type="button" onClick={testPush} value='Click Me'></input>
     </div>
   );
+}
+
+function testPush() {
+    console.log('Trying Push')
+    fetch('http://127.0.0.1:8000/api/api/',{
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            address: "100 Street st",
+            ListPrice : 420000,
+            cashflow : 1000
+        })
+    })
 }
