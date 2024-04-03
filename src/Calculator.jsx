@@ -255,6 +255,7 @@ export default function Calculator() {
       padding={3}
     >
       <Stack>
+        <p>{window.innerWidth}</p>
         <FormBoxContainer className="Addr" sx={FC_sx} Title="Address">
           <TextRow label='Address' obj={Address}/>
         </FormBoxContainer>
