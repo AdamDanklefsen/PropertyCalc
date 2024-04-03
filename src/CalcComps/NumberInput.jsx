@@ -20,20 +20,8 @@ export default function NumberInput({
   return (
     <React.Fragment>
         <div className="CustomNumberInput">
-            <button className="btn increment"
-                onClick={id==0 ? 
-                    (e) => {onChange(e,Number(value)+Number(inc))}
-                    :
-                    (e) => {onChange(e,Number(value)+Number(inc),Number(id)-1)}
-                }
-            >▴</button>
-            <button className="btn decrement"
-                onClick={id==0 ? 
-                    (e) => {onChange(e,Number(value)-Number(inc))}
-                    :
-                    (e) => {onChange(e,Number(value)-Number(inc),Number(id)-1)}
-                }
-            >▾</button>
+            
+            
             {fmt==='$'
             ? <p className="adorn StartAdornment">$</p>
             : <></>}
@@ -55,11 +43,28 @@ export default function NumberInput({
             {fmt==='%'
             ? <p className="adorn EndAdornment">%</p>
             : <></>}
+
+            <div className="BtnGroup">
+                <button className="btn increment"
+                    onClick={id==0 ? 
+                        (e) => {onChange(e,Number(value)+Number(inc))}
+                        :
+                        (e) => {onChange(e,Number(value)+Number(inc),Number(id)-1)}
+                    }
+                >▴</button>
+                <button className="btn decrement"
+                    onClick={id==0 ? 
+                        (e) => {onChange(e,Number(value)-Number(inc))}
+                        :
+                        (e) => {onChange(e,Number(value)-Number(inc),Number(id)-1)}
+                    }
+                >▾</button>
+            </div>  
             
         </div>
 
       
-      <Styles />
+      <Styles fmt={fmt}/>
     </React.Fragment>
   );
 }
@@ -96,7 +101,7 @@ function useIsDarkMode() {
   return theme.palette.mode === "dark";
 }
 
-function Styles() {
+function Styles(fmt) {
   // Replace this with your app logic for determining dark mode
   const isDarkMode = useIsDarkMode();
 
@@ -114,13 +119,11 @@ function Styles() {
           isDarkMode ? "rgba(0,0,0, 0.5)" : "rgba(0,0,0, 0.05)"
         };
         height: auto;
-        display: grid;
-        grid-template-columns: 12px 1fr 14px 19px;
-        grid-template-rows: 1fr 1fr;
+        display: flex;
         overflow: hidden;
-        column-gap: 8px;
-        padding: 4px;
-        min-width: 132px;
+        padding: 2px 4px;
+        gap: 4px;
+        min-width: 100px;
       }
 
       .CustomNumberInput:hover {
@@ -139,13 +142,16 @@ function Styles() {
         height: auto;
       }
       .CustomNumberInput .StartAdornment {
-        grid-column: 1;
-        grid-row: 1 / span 2;
+        flex: 0 0 auto;
         align-self: center;
       }
       .CustomNumberInput .EndAdornment {
-        grid-column: 3;
-        grid-row: 1 / span 2;
+        flex: 0 0 auto;
+        align-self: center;
+      }
+      .CustomNumberInput .BtnGroup {
+        flex: 0 0 auto;
+        width: 19px;
         align-self: center;
       }
 
@@ -155,15 +161,14 @@ function Styles() {
         font-weight: 200;
         line-height: 1.5;
         grid-column: 2;
-        grid-row: 1/3;
         color: ${isDarkMode ? grey[300] : grey[900]};
         background: inherit;
         border: none;
         border-radius: inherit;
         padding: 8px 0px 8px 0px;
         outline: 0;
-        max-width: 100px;
         appearance: none;
+        flex: 1;
         width: 100%;
       }
 
@@ -206,8 +211,6 @@ function Styles() {
       }
 
       .CustomNumberInput .btn.increment {
-        grid-column: 4;
-        grid-row: 1;
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         border: 1px solid;
@@ -225,8 +228,6 @@ function Styles() {
       }
 
       .CustomNumberInput .btn.decrement {
-        grid-column: 4;
-        grid-row: 2;
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
         border: 1px solid;

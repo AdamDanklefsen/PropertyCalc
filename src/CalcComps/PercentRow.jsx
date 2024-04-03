@@ -39,7 +39,7 @@ export default function PercentRow( {
 function Styles() {
     return (<style>{`
     .PercentRowDiv {
-        grid-template-columns: 130px 1fr 1fr;
+        grid-template-columns: 100px 1fr 1fr;
     }
     `}</style>);
 }
