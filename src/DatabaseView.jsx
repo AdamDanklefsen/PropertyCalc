@@ -7,9 +7,27 @@ export default function WelcomePage() {
   const JsonData = {
     Elements: [
       {
-        address: "123 Cherry st",
-        ListPrice: 100000,
-        cashflow: 100,
+        address: "123 Example st",
+        ListPrice: 0,
+        DownPayment: 0,
+        mRate: 0,
+        Term: 0,
+        LoanPmt: 0,
+        pTaxes: 0,
+        MortgageInsurance: 0,
+        Insurance: 0,
+        MortgagePmt: 0,
+        Units: 0,
+        TotalRent: 0,
+        Beds: 0,
+        Baths: 0,
+        CapEx: 0,
+        Vacancy: 0,
+        Maintenance: 0,
+        Reserves: 0,
+        NOI: 0,
+        CapRate: 0,
+        CashFlow: 100,
       }
     ],
   };
@@ -41,7 +59,6 @@ export default function WelcomePage() {
     <div>
       <h1>This is the DatabaseView Page</h1>
       <TableView data={catFact}></TableView>
-      <input type="button" onClick={testPush} value='Click Me'></input>
     </div>
   );
 }
