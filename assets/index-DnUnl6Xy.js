@@ -298,7 +298,7 @@ Error generating stack: `+i.message+`
             width: 100%;
         }
         .NumberRowDiv {
-            grid-template-columns: 130px 1fr;
+            grid-template-columns: 100px 1fr;
         }
         .RowLabel {
             font-size: 14px;
@@ -311,15 +311,15 @@ Error generating stack: `+i.message+`
     }
     `})}function cE({rent:e,totalrent:t,label:n,min:r=0,max:o=1e9,inc:i=10,incp:l=5}){return g.jsxs(S.Fragment,{children:[g.jsxs("div",{className:"RentRowDiv RowDiv",children:[g.jsx("p",{className:"RowLabel",children:n}),g.jsx($n,{value:t.val,onChange:t.Changed,set:t.set,inc:i,fmt:"$"}),g.jsx($n,{value:e.val,onChange:e.Changed,set:e.set,inc:l,fmt:"$"})]}),g.jsx(dE,{})]})}function dE(){return g.jsx("style",{children:`
     .RentRowDiv {
-        grid-template-columns: 130px 1fr 1fr;
+        grid-template-columns: 100px 1fr 1fr;
     }
     `})}function fE({beds:e,baths:t,label:n,min:r=0,max:o=1e9,inc:i=1,incp:l=.5}){return g.jsxs(S.Fragment,{children:[g.jsxs("div",{className:"BBRowDiv RowDiv",children:[g.jsx("p",{className:"RowLabel",children:n}),g.jsx($n,{value:e.val,onChange:e.Changed,set:e.set,inc:i}),g.jsx($n,{value:t.val,onChange:t.Changed,set:t.set,inc:l})]}),g.jsx(pE,{})]})}function pE(){return g.jsx("style",{children:`
     .BBRowDiv {
-        grid-template-columns: 130px 1fr 1fr;
+        grid-template-columns: 100px 1fr 1fr;
     }
     `})}function mE({obj:e,label:t,fmt:n,min:r=0,max:o=1e9,inc:i=1}){return g.jsxs(S.Fragment,{children:[g.jsxs("div",{className:"TextRowDiv RowDiv",children:[g.jsx("p",{className:"RowLabel",children:t}),g.jsx("div",{className:"CustomTextInput",children:g.jsx("input",{className:"input autofill-background",type:"text",value:e.val,onChange:l=>{const s=l.target.value;onChange(l,s)}})})]}),g.jsx(gE,{})]})}const Ci={50:"#E9F8FC",100:"#BDEBF4",200:"#99D8E5",300:"#66BACC",400:"#1F94AD",500:"#0D5463",600:"#094855",700:"#063C47",800:"#043039",900:"#022127"},un={50:"#F3F6F9",100:"#E5EAF2",200:"#DAE2ED",300:"#C7D0DD",400:"#B0B8C4",500:"#9DA8B7",600:"#6B7A90",700:"#434D5B",800:"#303740",900:"#1C2025"};function hE(){return Ar().palette.mode==="dark"}function gE(){const e=hE();return g.jsx("style",{children:`
         .TextRowDiv {
-            grid-template-columns: 130px 1fr;
+            grid-template-columns: 100px 1fr;
         }
         .CustomTextInput {
             font-family: 'IBM Plex Sans', sans-serif;
