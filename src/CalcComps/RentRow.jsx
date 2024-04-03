@@ -41,7 +41,7 @@ export default function RentRow( {
 function Styles() {
     return (<style>{`
     .RentRowDiv {
-        grid-template-columns: 130px 1fr 1fr;
+        grid-template-columns: 100px 1fr 1fr;
     }
     `}</style>);
 }

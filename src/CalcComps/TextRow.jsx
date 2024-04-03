@@ -73,7 +73,7 @@ function Styles() {
     const isDarkMode = useIsDarkMode();
     return (<style>{`
         .TextRowDiv {
-            grid-template-columns: 130px 1fr;
+            grid-template-columns: 100px 1fr;
         }
         .CustomTextInput {
             font-family: 'IBM Plex Sans', sans-serif;

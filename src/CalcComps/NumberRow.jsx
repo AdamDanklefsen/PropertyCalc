@@ -39,7 +39,7 @@ function Styles() {
             width: 100%;
         }
         .NumberRowDiv {
-            grid-template-columns: 130px 1fr;
+            grid-template-columns: 100px 1fr;
         }
         .RowLabel {
             font-size: 14px;
