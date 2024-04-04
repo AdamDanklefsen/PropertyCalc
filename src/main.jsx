@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { HashRouter } from 'react-router-dom'
 import HomePage from './HomePage.jsx'
 import './index.css'
 
@@ -24,7 +25,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={darkTheme}>
     <CssBaseline />
-    <HomePage />
+    <HashRouter>
+      <HomePage />
+    </HashRouter>
     </ThemeProvider>
   </React.StrictMode>,
 )

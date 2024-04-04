@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import * as React from 'react';
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { CardHeader } from "@mui/material";
 import WelcomePage from './WelcomePage'
 import DatabaseView from './DatabaseView'
@@ -14,13 +15,11 @@ export default function HomePage() {
   return (
     <Box className="HomePage" bgcolor='background.default'>
         <Navbar pages={["P1", "P2"]}/>
-        <HashRouter>
         <Routes>
             <Route exact path="/" element={<WelcomePage />} />
             <Route path="/db" element={<DatabaseView />} />
             <Route path="/calc" element={<Calculator />} />
         </Routes>
-        </HashRouter>
         <footer>
             <p>Ralph's Property Calculator &copy; 2024</p>
         </footer>
@@ -28,8 +27,4 @@ export default function HomePage() {
   )
 }
 
-/*
-<h1>Property Calculator</h1>
-      
-      <TableView data={JsonData}/>
-*/
+// http://localhost:5173/PropertyCalc/calc?pPrice=225000&Management=0&DownPayment=3.5&mRate=6.25&Rent=1320&MortgageInsurance=.8

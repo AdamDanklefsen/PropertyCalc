@@ -390,9 +390,9 @@ export default function Calculator() {
 function queryUrl(Address, pPrice, DownPayment, ClosingCosts, mRate,
   Term, pTaxes, MortgageInsurance, Insurance, Units,
   Beds, Baths, TotalRent, CapEx, Vacancy, Maintenance, Management, rawDefaultValues) {
-    let st = '.#/calc';
+    let st = './calc/?';
     if (rawDefaultValues.Address!=Address.val) {
-      st = st + '?Address=' + Address.val;
+      st = st + '&Address=' + Address.val;
     }
     if (rawDefaultValues.pPrice!=pPrice.val) {
       st = st + '&pPrice=' + pPrice.val;
@@ -442,6 +442,7 @@ function queryUrl(Address, pPrice, DownPayment, ClosingCosts, mRate,
     if (rawDefaultValues.Management!=Management.valPercent) {
       st = st + '&Management=' + Management.valPercent;
     }
+    st = st.replace('?&','?');
     return st;
   }
 
