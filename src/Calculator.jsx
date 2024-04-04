@@ -232,11 +232,18 @@ export default function Calculator() {
 
   const [open, setOpen] = React.useState(false);
 
+
+  var CustomLink = queryUrl(Address, pPrice, DownPayment, ClosingCosts, mRate,
+    Term, pTaxes, MortgageInsurance, Insurance, Units,
+    Beds, Baths, TotalRent, CapEx, Vacancy, Maintenance, Management, rawDefaultValues);
+
   const FC_sx = {
     display: "flex",
     border: "1px",
     width: "100%",
   };
+
+  
 
 
   return (
@@ -337,11 +344,18 @@ export default function Calculator() {
         <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <Button variant="contained"
             sx={{margin: 1, width:"50%"}}
-            href={queryUrl(Address, pPrice, DownPayment, ClosingCosts, mRate,
-                                      Term, pTaxes, MortgageInsurance, Insurance, Units,
-                                      Beds, Baths, TotalRent, CapEx, Vacancy, Maintenance, Management, rawDefaultValues)}
+            href={CustomLink}
             >
             Calculate
+          </Button>
+          <Button variant="contained"
+            sx={{margin: 1, width:"50%"}}
+            onClick={(e) => {
+              
+              console.log(window.location.origin + window.location.pathname + CustomLink.slice(2));
+              navigator.clipboard.writeText(window.location.origin + window.location.pathname + CustomLink.slice(2));
+            }}>
+            Copy  
           </Button>
         <Button variant="contained"
           sx={{margin: 1, width:"50%"}}
@@ -390,7 +404,7 @@ export default function Calculator() {
 function queryUrl(Address, pPrice, DownPayment, ClosingCosts, mRate,
   Term, pTaxes, MortgageInsurance, Insurance, Units,
   Beds, Baths, TotalRent, CapEx, Vacancy, Maintenance, Management, rawDefaultValues) {
-    let st = './calc/?';
+    let st = './#calc/?';
     if (rawDefaultValues.Address!=Address.val) {
       st = st + '&Address=' + Address.val;
     }
