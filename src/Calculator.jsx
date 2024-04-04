@@ -343,13 +343,13 @@ export default function Calculator() {
 
         <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
           <Button variant="contained"
-            sx={{margin: 1, width:"50%"}}
+            sx={{margin: 1, width:"33%"}}
             href={CustomLink}
             >
             Calculate
           </Button>
           <Button variant="contained"
-            sx={{margin: 1, width:"50%"}}
+            sx={{margin: 1, width:"33%"}}
             onClick={(e) => {
               
               console.log(window.location.origin + window.location.pathname + CustomLink.slice(2));
@@ -358,7 +358,7 @@ export default function Calculator() {
             Copy  
           </Button>
         <Button variant="contained"
-          sx={{margin: 1, width:"50%"}}
+          sx={{margin: 1, width:"33%"}}
           onClick={ (e) => testPush(e, Address, pPrice, DownPayment, mRate,
                                     Term, LoanPmt, pTaxes, MortgageInsurance, Insurance,
                                     Units, Beds, Baths, TotalRent,
